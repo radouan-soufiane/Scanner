@@ -1,0 +1,37 @@
+import os
+import tkinter as tk
+from tkinter import filedialog, messagebox
+
+class SecurityScannerApp:
+    def __init__(self, root):
+        self.root = root
+        self.root.title("Antivirus Simulator")
+        self.root.geometry("400x200")
+        
+        self.label = tk.Label(root, text="Scanner de Fichiers Suspects", font=("Arial", 12))
+        self.label.pack(pady=20)
+        
+        self.btn_scan = tk.Button(root, text="Lancer le Scan de Sécurité", command=self.scan_files, width=30, bg="#ffcccc")
+        self.btn_scan.pack(pady=10)
+
+    def scan_files(self):
+        folder = filedialog.askdirectory(title="Choisir le dossier à scanner")
+        if not folder: return
+        
+        suspicious_extensions = ('.bat', '.exe', '.vbs', '.scr')
+        found_files = []
+        
+        for root, dirs, files in os.walk(folder):
+            for file in files:
+                if file.endswith(suspicious_extensions):
+                    found_files.append(os.path.join(root, file))
+        
+        if found_files:
+            messagebox.showwarning("Attention", f"Menaces détectées ({len(found_files)} fichiers) : \n" + "\n".join(found_files[:5]))
+        else:
+            messagebox.showinfo("Scan Terminé", "Aucune menace détectée.")
+
+if __name__ == "__main__":
+    root = tk.Tk()
+    app = SecurityScannerApp(root)
+    root.mainloop()
